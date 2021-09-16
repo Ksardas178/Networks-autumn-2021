@@ -1,2 +1,2 @@
-# Networks-autumn-2021
+# Networks (autumn 2021)
 Educational projects
