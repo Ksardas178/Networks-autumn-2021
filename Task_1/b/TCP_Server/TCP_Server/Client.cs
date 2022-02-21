@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Net.Sockets;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TCP_Server
 { 
@@ -14,6 +15,7 @@ namespace TCP_Server
         string userName;
         TcpClient client;
         Server server;
+        Task processTask;
 
         public Client(TcpClient newClient, Server newServer)
         {
@@ -21,6 +23,11 @@ namespace TCP_Server
             client = newClient;
             server = newServer;
             newServer.AddConnection(this);
+        }
+
+        public void ProcessTask()
+        {
+            processTask = Task.Run(() => Process());
         }
 
         public void Process()

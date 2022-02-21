@@ -45,15 +45,15 @@ namespace TCP_Server
         async Task Accept(TcpClient tcpClient)
         {
             //Возврат управления вызывающему коду
-            await Task.Yield();
+            //await Task.Yield();
             try
             {
                 Client client = new Client(tcpClient, this);
-                await Task.Run(() => client.Process());
+                await Task.Run(() => client.ProcessTask());
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(e.Message);
             }
         }
 
