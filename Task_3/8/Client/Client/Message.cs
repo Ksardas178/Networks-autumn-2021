@@ -13,7 +13,8 @@ namespace Client
         MAKING_BET = 3,
         DRAWING = 4,
         INFORMING_CLIENT = 5,
-        DISCONNECT = 6
+        DISCONNECT = 6,
+        ACK = 7
     }
 
     class Message
@@ -96,7 +97,7 @@ namespace Client
         {
             MessageType messageType = (MessageType)data[0];
 
-            if (messageType != MessageType.INFORMING_CLIENT && messageType != MessageType.BETS_ANNOUNCEMENT)
+            if (messageType != MessageType.INFORMING_CLIENT && messageType != MessageType.BETS_ANNOUNCEMENT && messageType != MessageType.ACK)
             {
                 throw new ArgumentException("Invalid message type");
             }

@@ -18,15 +18,16 @@ namespace Client
         static TcpClient client;
         static NetworkStream stream;
         static Bet clientBet;
+        static bool registered = false;
 
         static void Main(string[] args)
         {
             Console.SetWindowSize(60, 15);
 
-            userName = GetUserName();
-            userPassword = GetUserPassword();
+
             var socket = GetSocket();
             userType = GetUserType();
+            userName = GetUserName();
 
             client = new TcpClient();
             try
@@ -35,13 +36,20 @@ namespace Client
                 client.Connect(socket.Item1, socket.Item2);
                 stream = client.GetStream();
 
-                Message message = new Message(userType, userName, userPassword);
-                byte[] data = message.data;
-                stream.Write(data, 0, data.Length);
-
                 //Thread for recieving data
                 Thread receiveThread = new Thread(new ThreadStart(RecieveContent));
                 receiveThread.Start();
+
+                do
+                {
+                    userPassword = GetUserPassword();
+                    Message message = new Message(userType, userName, userPassword);
+                    byte[] data = message.data;
+                    stream.Write(data, 0, data.Length);
+                    Thread.Sleep(100);
+                }
+                while (!registered);
+
                 Console.WriteLine("Welcome, {0}", userName);
 
                 SendContent();
@@ -195,6 +203,9 @@ namespace Client
                         case MessageType.INFORMING_CLIENT:
                             RecieveInfo(message);
                             break;
+                        case MessageType.ACK:
+                            registered = true;
+                            break;
                         default:
                             Console.WriteLine("[Debug] Incorrect type");
                             break;
@@ -251,7 +262,7 @@ namespace Client
         private static Tuple<string, int> GetSocket()
         {
             const int PORT = 451;
-            const string HOST = "127.0.0.1";
+            const string HOST = "26.118.51.73";
 
             Console.Write($"Insert server ID (defaults to {HOST}): ");
             string host = Console.ReadLine();
